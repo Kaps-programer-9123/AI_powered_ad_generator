@@ -1,0 +1,5 @@
+[
+  {"id": 1, "name": "TrailBlazer X", "description": "Lightweight, waterproof hiking boots perfect for any terrain.", "features": ["Lightweight", "Waterproof", "Durable"], "price": 120},
+  {"id": 2, "name": "Summit Explorer", "description": "Heavy-duty hiking boots offering maximum ankle support and grip.", "features": ["High Ankle Support", "Excellent Grip", "Robust"], "price": 150},
+  {"id": 3, "name": "Urban Walker", "description": "Comfortable and stylish shoes for everyday city walks.", "features": ["Comfortable", "Stylish", "Breathable"], "price": 80}
+]

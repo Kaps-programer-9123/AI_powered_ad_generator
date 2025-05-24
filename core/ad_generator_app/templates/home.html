@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>AI Ad Generator</title>
+</head>
+<body>
+    <h1>Generate an Ad</h1>
+    <form id="adForm">
+        <input type="text" id="query" name="q" placeholder="Enter your topic">
+        <button type="button" onclick="generateAd()">Generate</button>
+    </form>
+    <div id="results"></div>
+
+    <script>
+        function generateAd() {
+            const query = document.getElementById('query').value;
+            fetch(`/generate_ad/?q=${query}`)
+                .then(response => response.json())
+                .then(data => {
+                    const resultsDiv = document.getElementById('results');
+                    if (data.ad_copy) {
+                        resultsDiv.innerHTML = `<h3>Generated Ad:</h3><p>${data.ad_copy}</p>`;
+                        if (data.relevant_products.length > 0) {
+                            resultsDiv.innerHTML += "<h3>Relevant Products:</h3><ul>";
+                            data.relevant_products.forEach(p => {
+                                resultsDiv.innerHTML += `<li>${p.name}: ${p.description}</li>`;
+                            });
+                            resultsDiv.innerHTML += "</ul>";
+                        }
+                        if (data.relevant_blogs.length > 0) {
+                            resultsDiv.innerHTML += "<h3>Relevant Blog Snippets:</h3><ul>";
+                            data.relevant_blogs.forEach(b => {
+                                resultsDiv.innerHTML += `<li>${b.title}: ${b.content.substring(0, 100)}...</li>`;
+                            });
+                            resultsDiv.innerHTML += "</ul>";
+                        }
+                    } else if (data.error) {
+                        resultsDiv.innerHTML = `<p style="color:red;">Error: ${data.error}</p>`;
+                    }
+                });
+        }
+    </script>
+</body>
+</html>

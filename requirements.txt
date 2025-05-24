@@ -1,0 +1,6 @@
+Django
+langchain
+sentence-transformers
+faiss-cpu
+torch
+transformers
