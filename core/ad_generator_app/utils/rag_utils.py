@@ -1,5 +1,6 @@
 # ad_generator_app/utils/rag_utils.py
 from langchain_community.chat_models import ChatOpenAI
+from langchain_core.messages import HumanMessage
 from langchain.prompts import PromptTemplate
 from sentence_transformers import CrossEncoder
 from .embedding_utils import (
@@ -11,7 +12,10 @@ from .embedding_utils import (
 )
 import os
 from os import getenv
+import logging
 
+logging.basicConfig(level=logging.INFO)  # Or DEBUG, WARNING, etc.
+log = logging.getLogger(__name__)
 
 # Initialize Cross-Encoder for reranking
 RERANKER_MODEL_NAME = 'cross-encoder/ms-marco-MiniLM-L-6-v2'
@@ -54,8 +58,13 @@ def generate_ad_copy(query, relevant_products, relevant_blogs=None, llm=None):
         {blog_info}
         Focus on relevance and user interest. Include a call to action if appropriate."""
     )
+    log.info("template : ")
+    log.info(template)
+    log.info(query)
+    log.info(product_info)
+    log.info(blog_info)
     prompt = template.format(query=query, product_info=product_info, blog_info=blog_info)
-    return llm(prompt)
+    return llm.invoke([HumanMessage(content=prompt)])
 
 class RAGPipeline:
     def __init__(self, product_data_path, blog_data_path):
@@ -89,7 +98,12 @@ class RAGPipeline:
 
         # 4. Generate ad copy using the LLM and retrieved context
         if self.llm:
-            ad_copy = generate_ad_copy(query, reranked_relevant_products, reranked_relevant_blogs, self.llm)
+            ad_copy_message = generate_ad_copy(query, reranked_relevant_products, reranked_relevant_blogs, self.llm)
+
+            # Safely extract string content
+            ad_copy = ad_copy_message.content if hasattr(ad_copy_message, "content") else str(ad_copy_message)
+
+            log.info("Generated ad copy: %s", ad_copy)
         else:
             ad_copy = "Please configure an LLM to generate ad copy."
 

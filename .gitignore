@@ -1,3 +1,9 @@
 /venv
 **/*.env
 .env
+
+# Ignore all __pycache__ folders anywhere in the project
+**/__pycache__/
+
+# Ignore all Python bytecode files anywhere
+**/*.py[cod]
