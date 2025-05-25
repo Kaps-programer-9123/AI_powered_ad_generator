@@ -52,12 +52,43 @@ def generate_ad_copy(query, relevant_products, relevant_blogs=None, llm=None):
         blog_info = "\n".join([f"- '{b['title']}': {b['content'][:100]}..." for b in relevant_blogs])
 
     template = PromptTemplate.from_template(
-        """You are an AI advertising agent. Generate a short and compelling ad based on the user's query: '{query}'.
-        Incorporate information from the following products:
-        {product_info}
-        {blog_info}
-        Focus on relevance and user interest. Include a call to action if appropriate."""
+        # """You are an AI advertising agent. Generate a short and compelling advertizing mail and contecnt based on the user's query: '{query}'.
+        # Incorporate information from the following products:
+        # {product_info}
+        # {blog_info}
+        # Focus on relevance and user interest. Include a call to action if appropriate."""
+        
+        """You are an AI advertising agent. Your goal is to generate both:
+            1. A short and compelling ad copy for immediate use.
+            2. Content for an advertising email to the customer, providing more details.
+
+            Base your response on the user's query: '{query}'.
+
+            Incorporate information from the following products:
+            --- PRODUCTS ---
+            {product_info}
+            ---
+
+            And information from these blog posts (if available):
+            --- BLOGS ---
+            {blog_info}
+            ---
+
+            For each product in '{product_info}', please try to mention its key features.
+
+            The **ad copy** should be concise and attention-grabbing, ideally including a call to action if relevant.
+
+            The **email content** should be more detailed, highlighting how the products relate to the user's query, elaborating on their features, and encouraging the customer to learn more or make a purchase.
+
+            Please output your response in the following format:
+
+            --- AD COPY ---
+            [Generated Ad Copy Here]
+            --- EMAIL CONTENT ---
+            [Generated Email Content Here]
+            """
     )
+    
     log.info("template : %s",template)
     log.info("query : %s",query)
     log.info("product_info:  %s",product_info)
@@ -77,13 +108,18 @@ class RAGPipeline:
 
     def run(self, query):
         # 1. Retrieve relevant products
-        product_distances, product_indices = search_faiss_index(self.product_index, query, top_k=5)
+        product_distances, product_indices = search_faiss_index(self.product_index, query, top_k=2)
         relevant_products = get_relevant_data(self.product_data, product_indices)
 
         # 2. Retrieve relevant blog posts
-        blog_distances, blog_indices = search_faiss_index(self.blog_index, query, top_k=3)
+        blog_distances, blog_indices = search_faiss_index(self.blog_index, query, top_k=2)
         relevant_blogs = get_relevant_data(self.blog_data, blog_indices)
-
+        
+        log.info("##########################################################################")
+        log.info("relevant_products : %s",relevant_products)
+        log.info("relevant_blogs : %s",relevant_blogs)
+        log.info("query:  %s",query)
+        
         # 3. Rerank the retrieved content (optional but good for quality)
         product_descriptions = [p['description'] for p in relevant_products]
         reranked_products = rerank_results(query, product_descriptions)
@@ -97,9 +133,9 @@ class RAGPipeline:
 
         # 4. Generate ad copy using the LLM and retrieved context
         if self.llm:
-            log.info("#############################################################")
-            log.info("reranked_relevant_products : %s",reranked_relevant_products)
-            log.info("reranked_relevant_blogs : %s",reranked_relevant_blogs)
+            log.info("##########################################################################")
+            log.info("reranked_products : %s",reranked_products)
+            log.info("reranked_blogs : %s",reranked_blogs)
             log.info("query:  %s",query)
             ad_copy_message = generate_ad_copy(query, reranked_relevant_products, reranked_relevant_blogs, self.llm)
 
