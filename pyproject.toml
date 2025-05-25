@@ -1,0 +1,26 @@
+[project]
+name = "ai-powered-ad-generator"
+version = "0.1.0"
+description = "This demo project for agentic ai"
+authors = [
+    {name = "kapil chaudhari",email = "kapil.programer@gmail.com"}
+]
+license = {text = "Na"}
+readme = "README.md"
+requires-python = ">=3.12"
+dependencies = [
+
+]
+
+[tool.poetry.dependencies]
+python = ">=3.12,<4.0"
+django = "^5.0" 
+langchain = "0.3.25"
+sentence-transformers = "*"
+faiss-cpu = "*"
+torch = "*"
+transformers = "*"
+
+[build-system]
+requires = ["poetry-core>=2.0.0,<3.0.0"]
+build-backend = "poetry.core.masonry.api"

@@ -1,5 +1,5 @@
 # ad_generator_app/utils/rag_utils.py
-from langchain.llms import OpenAI  # You might need to configure an LLM
+from langchain_community.chat_models import ChatOpenAI
 from langchain.prompts import PromptTemplate
 from sentence_transformers import CrossEncoder
 from .embedding_utils import (
@@ -10,6 +10,8 @@ from .embedding_utils import (
     EMBEDDING_MODEL
 )
 import os
+from os import getenv
+
 
 # Initialize Cross-Encoder for reranking
 RERANKER_MODEL_NAME = 'cross-encoder/ms-marco-MiniLM-L-6-v2'
@@ -17,7 +19,16 @@ RERANKER = CrossEncoder(RERANKER_MODEL_NAME)
 
 # You'll need an OpenAI API key if you use OpenAI's models
 # os.environ["OPENAI_API_KEY"] = "YOUR_OPENAI_API_KEY"
-# LLM = OpenAI() # Or any other Langchain-supported LLM
+def get_llm():
+    key = getenv("OPENROUTER_BASE_URL")
+    print("###### "+key)
+    llm = ChatOpenAI(
+        openai_api_base=getenv("OPENROUTER_BASE_URL"),
+        openai_api_key=getenv("OPENROUTER_API_KEY"),
+        model_name="google/gemma-3-27b-it:free"
+    )
+    return llm
+
 
 def rerank_results(query, documents):
     if not documents:
@@ -54,7 +65,7 @@ class RAGPipeline:
         self.blog_index = build_faiss_index(blog_embeddings)
         # Initialize an LLM here if you want to use Langchain's LLM integration
         # self.llm = OpenAI() if os.environ.get("OPENAI_API_KEY") else None
-        self.llm = None # For now, you'd need to replace this with an actual LLM instance
+        self.llm = get_llm() # For now, you'd need to replace this with an actual LLM instance
 
     def run(self, query):
         # 1. Retrieve relevant products

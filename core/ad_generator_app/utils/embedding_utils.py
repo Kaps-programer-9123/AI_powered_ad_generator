@@ -30,10 +30,10 @@ def get_relevant_data(data, indices):
 
 if __name__ == '__main__':
     # Example usage:
-    product_data, product_embeddings = load_and_embed_data('../../../data/products.json', 'description')
+    product_data, product_embeddings = load_and_embed_data('../../data/products.json', 'description')
     product_index = build_faiss_index(product_embeddings)
 
-    blog_data, blog_embeddings = load_and_embed_data('../../../data/blog_posts.json', 'content')
+    blog_data, blog_embeddings = load_and_embed_data('../../data/blog_posts.json', 'content')
     blog_index = build_faiss_index(blog_embeddings)
 
     query = "comfortable shoes for walking"
