@@ -1,42 +1,119 @@
-<!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
+    <meta charset="UTF-8">
     <title>AI Ad Generator</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 40px;
+            background-color: #f4f4f4;
+        }
+
+        h1, h2, h3 {
+            color: #333;
+        }
+
+        form {
+            margin-bottom: 20px;
+        }
+
+        input[type="text"] {
+            padding: 10px;
+            width: 300px;
+            font-size: 16px;
+        }
+
+        button {
+            padding: 10px 20px;
+            font-size: 16px;
+            background-color: #007BFF;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #0056b3;
+        }
+
+        #results {
+            background-color: #fff;
+            border: 1px solid #ddd;
+            padding: 20px;
+            border-radius: 8px;
+        }
+
+        ul {
+            padding-left: 20px;
+        }
+
+        strong {
+            color: #000;
+        }
+    </style>
+
+    <!-- Optional: Include a Markdown parser -->
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
 </head>
 <body>
-    <h1>Generate an Ad</h1>
+
+    <h1>AI Ad Generator</h1>
+
     <form id="adForm">
-        <input type="text" id="query" name="q" placeholder="Enter your topic">
+        <input type="text" id="query" name="q" placeholder="Enter your topic" required>
         <button type="button" onclick="generateAd()">Generate</button>
     </form>
+
     <div id="results"></div>
 
     <script>
         function generateAd() {
-            const query = document.getElementById('query').value;
-            fetch(`/generate_ad/?q=${query}`)
-                .then(response => response.json())
+            const query = document.getElementById('query').value.trim();
+            const resultsDiv = document.getElementById('results');
+
+            if (!query) {
+                resultsDiv.innerHTML = '<p style="color:red;">Please enter a query.</p>';
+                return;
+            }
+
+            fetch(`/generate_ad/?q=${encodeURIComponent(query)}`)
+                .then(response => {
+                    if (!response.ok) throw new Error("Network response was not ok");
+                    return response.json();
+                })
                 .then(data => {
-                    const resultsDiv = document.getElementById('results');
+                    resultsDiv.innerHTML = ""; // Clear previous
+
                     if (data.ad_copy) {
-                        resultsDiv.innerHTML = `<h3>Generated Ad:</h3><p>${data.ad_copy}</p>`;
+                        // If using marked.js to parse markdown
+                        const adHtml = marked.parse(data.ad_copy);
+
+                        resultsDiv.innerHTML += `<h3>Generated Ad:</h3><div>${adHtml}</div>`;
+
                         if (data.relevant_products.length > 0) {
                             resultsDiv.innerHTML += "<h3>Relevant Products:</h3><ul>";
                             data.relevant_products.forEach(p => {
-                                resultsDiv.innerHTML += `<li>${p.name}: ${p.description}</li>`;
+                                resultsDiv.innerHTML += `<li><strong>${p.name}:</strong> ${p.description}</li>`;
                             });
                             resultsDiv.innerHTML += "</ul>";
                         }
+
                         if (data.relevant_blogs.length > 0) {
                             resultsDiv.innerHTML += "<h3>Relevant Blog Snippets:</h3><ul>";
                             data.relevant_blogs.forEach(b => {
-                                resultsDiv.innerHTML += `<li>${b.title}: ${b.content.substring(0, 100)}...</li>`;
+                                resultsDiv.innerHTML += `<li><strong>${b.title}:</strong> ${b.content.substring(0, 100)}...</li>`;
                             });
                             resultsDiv.innerHTML += "</ul>";
                         }
                     } else if (data.error) {
                         resultsDiv.innerHTML = `<p style="color:red;">Error: ${data.error}</p>`;
+                    } else {
+                        resultsDiv.innerHTML = `<p style="color:gray;">No ad copy was generated.</p>`;
                     }
+                })
+                .catch(error => {
+                    console.error("Fetch error:", error);
+                    resultsDiv.innerHTML = `<p style="color:red;">An unexpected error occurred.</p>`;
                 });
         }
     </script>

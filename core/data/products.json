@@ -1,5 +1,44 @@
 [
-  {"id": 1, "name": "TrailBlazer X", "description": "Lightweight, waterproof hiking boots perfect for any terrain.", "features": ["Lightweight", "Waterproof", "Durable"], "price": 120},
-  {"id": 2, "name": "Summit Explorer", "description": "Heavy-duty hiking boots offering maximum ankle support and grip.", "features": ["High Ankle Support", "Excellent Grip", "Robust"], "price": 150},
-  {"id": 3, "name": "Urban Walker", "description": "Comfortable and stylish shoes for everyday city walks.", "features": ["Comfortable", "Stylish", "Breathable"], "price": 80}
+  {
+    "id": 1,
+    "name": "TrailBlazer X",
+    "description": "Lightweight, waterproof hiking boots perfect for any terrain.",
+    "features": ["Lightweight", "Waterproof", "Durable"],
+    "price": 120
+  },
+  {
+    "id": 2,
+    "name": "Summit Explorer",
+    "description": "Heavy-duty hiking boots offering maximum ankle support and grip.",
+    "features": ["High Ankle Support", "Excellent Grip", "Robust"],
+    "price": 150
+  },
+  {
+    "id": 3,
+    "name": "Urban Walker",
+    "description": "Comfortable and stylish shoes for everyday city walks.",
+    "features": ["Comfortable", "Stylish", "Breathable"],
+    "price": 80
+  },
+  {
+    "id": 4,
+    "name": "Sunset Villa",
+    "description": "A beautiful 3-bedroom villa located near the beach with stunning ocean views.",
+    "features": ["3 Bedrooms", "Ocean View", "Private Pool"],
+    "price": 450000
+  },
+  {
+    "id": 5,
+    "name": "CodeMaster Pro",
+    "description": "A powerful laptop designed for software developers and data scientists.",
+    "features": ["Intel i9", "32GB RAM", "1TB SSD", "NVIDIA RTX 3080"],
+    "price": 2500
+  },
+  {
+    "id": 6,
+    "name": "HealthPlus Smartwatch",
+    "description": "Wearable device that tracks heart rate, sleep quality, and daily activity.",
+    "features": ["Heart Rate Monitor", "Sleep Tracker", "Water Resistant"],
+    "price": 200
+  }
 ]
