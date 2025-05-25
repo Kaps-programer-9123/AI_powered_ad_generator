@@ -58,11 +58,10 @@ def generate_ad_copy(query, relevant_products, relevant_blogs=None, llm=None):
         {blog_info}
         Focus on relevance and user interest. Include a call to action if appropriate."""
     )
-    log.info("template : ")
-    log.info(template)
-    log.info(query)
-    log.info(product_info)
-    log.info(blog_info)
+    log.info("template : %s",template)
+    log.info("query : %s",query)
+    log.info("product_info:  %s",product_info)
+    log.info("blog_info  %s: ",blog_info)
     prompt = template.format(query=query, product_info=product_info, blog_info=blog_info)
     return llm.invoke([HumanMessage(content=prompt)])
 
@@ -98,6 +97,10 @@ class RAGPipeline:
 
         # 4. Generate ad copy using the LLM and retrieved context
         if self.llm:
+            log.info("#############################################################")
+            log.info("reranked_relevant_products : %s",reranked_relevant_products)
+            log.info("reranked_relevant_blogs : %s",reranked_relevant_blogs)
+            log.info("query:  %s",query)
             ad_copy_message = generate_ad_copy(query, reranked_relevant_products, reranked_relevant_blogs, self.llm)
 
             # Safely extract string content
